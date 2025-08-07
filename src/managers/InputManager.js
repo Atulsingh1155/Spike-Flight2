@@ -36,7 +36,7 @@ export class InputManager {
     
     // Left arrow button with image
     if (this.scene.textures.exists('leftimage')) {
-        this.mobileControls.leftBtn = this.scene.add.image(60, height - 120, 'leftimage')
+        this.mobileControls.leftBtn = this.scene.add.image(60, height - 160, 'leftimage') // ← MOVED UP from height - 120 to height - 160
             .setScrollFactor(0)
             .setDepth(100)
             .setScale(0.2)  // ← DOUBLED from 0.1 to 0.2
@@ -44,12 +44,12 @@ export class InputManager {
             .setInteractive({ cursor: 'pointer' });
     } else {
         // Better fallback with proper size
-        this.mobileControls.leftBtn = this.scene.add.circle(60, height - 120, 70, 0x333333, 0.8) // ← DOUBLED from 35 to 70
+        this.mobileControls.leftBtn = this.scene.add.circle(60, height - 160, 70, 0x333333, 0.8) // ← MOVED UP from height - 120 to height - 160
             .setScrollFactor(0)
             .setDepth(100)
             .setInteractive({ cursor: 'pointer' });
             
-        this.scene.add.text(60, height - 120, '←', {
+        this.scene.add.text(60, height - 160, '←', { // ← MOVED UP from height - 120 to height - 160
             fontSize: '56px',  // ← DOUBLED from 28px to 56px
             fill: '#ffffff',
             fontFamily: 'Arial'
@@ -61,7 +61,7 @@ export class InputManager {
 
     // Right arrow button with image
     if (this.scene.textures.exists('rightimage')) {
-        this.mobileControls.rightBtn = this.scene.add.image(width - 60, height - 120, 'rightimage')
+        this.mobileControls.rightBtn = this.scene.add.image(width - 60, height - 160, 'rightimage') // ← MOVED UP from height - 120 to height - 160
             .setScrollFactor(0)
             .setDepth(100)
             .setScale(0.2)  // ← DOUBLED from 0.1 to 0.2
@@ -69,12 +69,12 @@ export class InputManager {
             .setInteractive({ cursor: 'pointer' });
     } else {
         // Better fallback with proper size
-        this.mobileControls.rightBtn = this.scene.add.circle(width - 60, height - 120, 70, 0x333333, 0.8) // ← DOUBLED from 35 to 70
+        this.mobileControls.rightBtn = this.scene.add.circle(width - 60, height - 160, 70, 0x333333, 0.8) // ← MOVED UP from height - 120 to height - 160
             .setScrollFactor(0)
             .setDepth(100)
             .setInteractive({ cursor: 'pointer' });
             
-        this.scene.add.text(width - 60, height - 120, '→', {
+        this.scene.add.text(width - 60, height - 160, '→', { // ← MOVED UP from height - 120 to height - 160
             fontSize: '56px',  // ← DOUBLED from 28px to 56px
             fill: '#ffffff',
             fontFamily: 'Arial'
@@ -83,6 +83,7 @@ export class InputManager {
         .setScrollFactor(0)
         .setDepth(101);
     }
+
 
     // ✅ ALSO UPDATE: Button press interactions to match new size
     
@@ -119,7 +120,7 @@ export class InputManager {
     });
 
     // ✅ FIX: Update touch area detection for larger buttons
-    this.scene.add.text(width/2, height - 30, 'Tap screen to jump • Use arrows to move', {
+     this.scene.add.text(width/2, height - 30, 'Tap screen to jump • Use arrows to move', {
         fontSize: '14px',
         fill: '#cccccc',
         fontFamily: 'Arial',
@@ -135,9 +136,9 @@ handlePointerDown(pointer) {
     const gameHeight = this.scene.cameras.main.height;
     const gameWidth = this.scene.cameras.main.width;
     
-    // ✅ FIX: Update touch areas for doubled button size
-    const leftControlArea = pointer.x < 140 && pointer.y > gameHeight - 180; // ← Increased from 120 to 140 and 160 to 180
-    const rightControlArea = pointer.x > gameWidth - 140 && pointer.y > gameHeight - 180; // ← Increased areas
+    // ✅ FIX: Update touch areas for moved up buttons
+    const leftControlArea = pointer.x < 140 && pointer.y > gameHeight - 220; // ← UPDATED from gameHeight - 180 to gameHeight - 220
+    const rightControlArea = pointer.x > gameWidth - 140 && pointer.y > gameHeight - 220; // ← UPDATED from gameHeight - 180 to gameHeight - 220
     const hudArea = pointer.y < 120; // Top HUD area
     
     // Allow jumping by tapping anywhere except control and HUD areas
