@@ -3,7 +3,6 @@ export class InputManager {
         this.scene = scene;
         this.cursors = null;
         this.mobileControls = {};
-        // ✅ FIX: Initialize jumpPressed property
         this.jumpPressed = false;
         this.setupControls();
     }
@@ -33,47 +32,121 @@ export class InputManager {
         const width = this.scene.cameras.main.width;
         const height = this.scene.cameras.main.height;
         
-        // Left button
-        this.mobileControls.leftBtn = this.scene.add.rectangle(80, height - 80, 120, 120, 0x000000, 0.3)
-            .setScrollFactor(0)
-            .setDepth(100)
-            .setInteractive();
-            
-        this.scene.add.text(80, height - 80, '←', { fontSize: '40px', fill: '#fff' })
+        // ✅ FIX: Better mobile control layout - only left and right arrows
+        
+        // Left arrow button with image
+        if (this.scene.textures.exists('leftimage')) {
+            this.mobileControls.leftBtn = this.scene.add.image(60, height - 80, 'leftimage')
+                .setScrollFactor(0)
+                .setDepth(100)
+                .setScale(0.1)  // ← Better size
+                .setAlpha(0.8)
+                .setInteractive({ cursor: 'pointer' });
+        } else {
+            // Better fallback with proper size
+            this.mobileControls.leftBtn = this.scene.add.circle(60, height - 80, 35, 0x333333, 0.8)
+                .setScrollFactor(0)
+                .setDepth(100)
+                .setInteractive({ cursor: 'pointer' });
+                
+            this.scene.add.text(60, height - 80, '←', { 
+                fontSize: '28px', 
+                fill: '#ffffff',
+                fontFamily: 'Arial'
+            })
             .setOrigin(0.5)
             .setScrollFactor(0)
             .setDepth(101);
+        }
 
-        // Right button
-        this.mobileControls.rightBtn = this.scene.add.rectangle(220, height - 80, 120, 120, 0x000000, 0.3)
-            .setScrollFactor(0)
-            .setDepth(100)
-            .setInteractive();
-            
-        this.scene.add.text(220, height - 80, '→', { fontSize: '40px', fill: '#fff' })
+        // Right arrow button with image
+        if (this.scene.textures.exists('rightimage')) {
+            this.mobileControls.rightBtn = this.scene.add.image(width - 60, height - 80, 'rightimage')
+                .setScrollFactor(0)
+                .setDepth(100)
+                .setScale(0.1)  // ← Better size
+                .setAlpha(0.8)
+                .setInteractive({ cursor: 'pointer' });
+        } else {
+            // Better fallback with proper size
+            this.mobileControls.rightBtn = this.scene.add.circle(width - 60, height - 80, 35, 0x333333, 0.8)
+                .setScrollFactor(0)
+                .setDepth(100)
+                .setInteractive({ cursor: 'pointer' });
+                
+            this.scene.add.text(width - 60, height - 80, '→', { 
+                fontSize: '28px', 
+                fill: '#ffffff',
+                fontFamily: 'Arial'
+            })
             .setOrigin(0.5)
             .setScrollFactor(0)
             .setDepth(101);
+        }
 
-        // Setup button events
-        this.mobileControls.leftBtn.on('pointerdown', () => this.mobileControls.leftPressed = true);
-        this.mobileControls.leftBtn.on('pointerup', () => this.mobileControls.leftPressed = false);
-        this.mobileControls.rightBtn.on('pointerdown', () => this.mobileControls.rightPressed = true);
-        this.mobileControls.rightBtn.on('pointerup', () => this.mobileControls.rightPressed = false);
+        // ✅ REMOVED: No more jump button in center - cleaner UI
+
+        // ✅ FIX: Better button interactions with proper visual feedback
+        
+        // Left button events
+        this.mobileControls.leftBtn.on('pointerdown', () => {
+            this.mobileControls.leftPressed = true;
+            this.mobileControls.leftBtn.setAlpha(0.2).setScale(0.15);
+        });
+        
+        this.mobileControls.leftBtn.on('pointerup', () => {
+            this.mobileControls.leftPressed = false;
+            this.mobileControls.leftBtn.setAlpha(0.15).setScale(0.1);
+        });
+        
+        this.mobileControls.leftBtn.on('pointerout', () => {
+            this.mobileControls.leftPressed = false;
+            this.mobileControls.leftBtn.setAlpha(0.15).setScale(0.1);
+        });
+
+        // Right button events
+        this.mobileControls.rightBtn.on('pointerdown', () => {
+            this.mobileControls.rightPressed = true;
+            this.mobileControls.rightBtn.setAlpha(0.2).setScale(0.15);
+        });
+        
+        this.mobileControls.rightBtn.on('pointerup', () => {
+            this.mobileControls.rightPressed = false;
+            this.mobileControls.rightBtn.setAlpha(0.15).setScale(0.1);
+        });
+        
+        this.mobileControls.rightBtn.on('pointerout', () => {
+            this.mobileControls.rightPressed = false;
+            this.mobileControls.rightBtn.setAlpha(0.15).setScale(0.1);
+        });
+
+        // ✅ FIX: Simple and clean mobile instruction
+        this.scene.add.text(width/2, height - 30, 'Tap screen to jump • Use arrows to move', {
+            fontSize: '14px',
+            fill: '#cccccc',
+            fontFamily: 'Arial',
+            align: 'center'
+        })
+        .setOrigin(0.5)
+        .setScrollFactor(0)
+        .setDepth(100)
+        .setAlpha(0.8);
     }
 
-  handlePointerDown(pointer) {
-    // ✅ FIX: Only trigger jump in game area, not in UI
-    const gameHeight = this.scene.cameras.main.height;
-    const gameWidth = this.scene.cameras.main.width;
-    
-    // Avoid UI areas (top 100px for HUD, bottom 200px for mobile controls)
-    if (pointer.y > 100 && pointer.y < gameHeight - 200 && 
-        pointer.x > 50 && pointer.x < gameWidth - 50) {
-        this.jumpPressed = true;
+    handlePointerDown(pointer) {
+        const gameHeight = this.scene.cameras.main.height;
+        const gameWidth = this.scene.cameras.main.width;
+        
+        // ✅ FIX: Better jump area - tap anywhere except control areas
+        const leftControlArea = pointer.x < 120 && pointer.y > gameHeight - 120;
+        const rightControlArea = pointer.x > gameWidth - 120 && pointer.y > gameHeight - 120;
+        const hudArea = pointer.y < 120; // Top HUD area
+        
+        // Allow jumping by tapping anywhere except control and HUD areas
+        if (!leftControlArea && !rightControlArea && !hudArea) {
+            this.jumpPressed = true;
+        }
     }
-}
-
 
     isLeftPressed() {
         return this.cursors.left.isDown || this.wasd.A.isDown || this.mobileControls.leftPressed;
@@ -86,13 +159,12 @@ export class InputManager {
     isJumpPressed() {
         return this.cursors.up.isDown || this.wasd.W.isDown || this.jumpPressed;
     }
-  update() {
-    // ✅ FIX: Reset jump pressed after frame to prevent stuck input
-    if (this.jumpPressed) {
-        // Set a timeout to reset jump pressed
-        this.scene.time.delayedCall(50, () => {
-            this.jumpPressed = false;
-        });
+
+    update() {
+        if (this.jumpPressed) {
+            this.scene.time.delayedCall(50, () => {
+                this.jumpPressed = false;
+            });
+        }
     }
-}
 }

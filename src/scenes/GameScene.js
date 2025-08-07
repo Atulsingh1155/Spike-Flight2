@@ -712,7 +712,7 @@ pauseGame() {
         this.pauseText = this.add.text(
             this.cameras.main.width/2, 
             this.cameras.main.height/2, 
-            'PAUSED\nPress ESC or click pause to resume', {
+            'PAUSED', {
             fontSize: '32px',
             fill: '#ffffff',
             fontFamily: 'Arial',

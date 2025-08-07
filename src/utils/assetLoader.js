@@ -53,7 +53,10 @@ export function loadAssets(scene) {
     // Load UI assets with error handling
     const uiAssets = [
         { key: 'coin', path: '/Assets/ui/coin.png' },
-        { key: 'button', path: '/Assets/ui/button.png' }
+        { key: 'button', path: '/Assets/ui/button.png' },
+        // ✅ FIX: Correct paths for mobile control images
+        { key: 'leftimage', path: '/Assets/ui/left.png' },
+        { key: 'rightimage', path: '/Assets/ui/right.png' }
     ];
 
     uiAssets.forEach(asset => {
@@ -69,6 +72,7 @@ export function loadAssets(scene) {
         }
     });
 }
+
 
 export function displayProgressLoader() {
     let width = 320;

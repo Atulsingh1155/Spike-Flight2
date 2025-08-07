@@ -67,7 +67,7 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
 
     // ✅ FIX: Better gravity and platform logic
     if (!this.onPlatform) {
-        this.setVelocityY(this.body.velocity.y + 1.2);
+        this.setVelocityY(this.body.velocity.y +2);
     } else {
         // Stick to platform
         this.y = this.onPlatform.y - this.onPlatform.displayHeight / 2 - this.displayHeight / 2;
