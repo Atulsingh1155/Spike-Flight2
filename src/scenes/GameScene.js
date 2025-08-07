@@ -409,7 +409,7 @@ update() {
         });
     }
 
-   createPlatform(x, y) {
+  createPlatform(x, y) {
     let platform;
     if (this.textures.exists('platform')) {
         platform = this.physics.add.sprite(x, y, 'platform');
@@ -418,16 +418,26 @@ update() {
         this.physics.add.existing(platform, true);
     }
     
-    // Random platform width based on difficulty
-    const minWidth = Math.max(70, 140 - (this.difficultyLevel * 8));   // ← Smaller starting size
-const maxWidth = Math.max(90, 170 - (this.difficultyLevel * 8));   // ← Smaller maximum size
-const width = Phaser.Math.Between(minWidth, maxWidth);
-
-platform.displayWidth = width;
-platform.displayHeight = 12; // ← Slightly thinner
+    // ✅ FIX: Better mobile platform size adjustment
+    const isMobile = this.sys.game.device.input.touch;
+    const mobileSizeMultiplier = isMobile ? 0.7 : 1.0; // Changed from 0.5 to 0.7 (70% size instead of 50%)
     
+    // Random platform width based on difficulty
+    const minWidth = Math.max(80, 140 - (this.difficultyLevel * 8)); // ✅ Increased minimum width
+    const maxWidth = Math.max(120, 170 - (this.difficultyLevel * 8)); // ✅ Increased maximum width
+    const width = Phaser.Math.Between(minWidth, maxWidth);
+
+    // ✅ APPLY: Mobile size adjustment with minimum size guarantee
+    const finalWidth = Math.max(60, width * mobileSizeMultiplier); // ✅ Ensure minimum 60px width
+    platform.displayWidth = finalWidth;
+    platform.displayHeight = 15; // ✅ Increased height slightly for better visibility
+    
+    // ✅ FIX: Ensure physics body is refreshed properly
     if (platform.refreshBody) {
         platform.refreshBody();
+    } else if (platform.body) {
+        // Manual body size update for fallback platforms
+        platform.body.setSize(finalWidth, 15);
     }
     
     platform.setImmovable(true);
@@ -435,8 +445,8 @@ platform.displayHeight = 12; // ← Slightly thinner
     this.platforms.add(platform);
     
     // ✅ ENHANCED: Higher chance to spawn coins
-    if (Phaser.Math.Between(1, 2) === 1) {  // ← 50% chance instead of 33%
-        this.spawnCoin(x, y - 50);  // ← Spawn higher above platform
+    if (Phaser.Math.Between(1, 2) === 1) {  // 50% chance instead of 33%
+        this.spawnCoin(x, y - 50);  // Spawn higher above platform
     }
     
     return platform;
